@@ -25,7 +25,7 @@ void printContainer(const T &t)
     }
 }
 
-std::vector<std::string> getInstalledPackagesByUser(const std::string &architecture);
+std::vector<std::string> getInstalledPackagesByUser(const std::string &architecture, bool notShowDeps, bool recIsDep);
 
 std::vector<std::string> whynot(const std::string &architecture);
 

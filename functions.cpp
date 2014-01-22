@@ -60,7 +60,7 @@ std::vector<string> getManuallyInstalledPackages()
 }
 
 
-std::vector<string> getInstalledPackagesByUser(const string &architecture)
+std::vector<string> getInstalledPackagesByUser(const string &architecture, bool notShowDeps, bool recIsDep)
 {
     auto mpkgs = getManuallyInstalledPackages();
     auto defpgks = getDefaultSetPackages(architecture);
@@ -74,8 +74,19 @@ std::vector<string> getInstalledPackagesByUser(const string &architecture)
                 break;
             }
         }
-        if(!mIsDef)
-            ans.push_back(m);
+        if(!mIsDef) {
+            if(notShowDeps) {
+                auto whyOutput = executeCommand("aptitude why " + m);
+                if(whyOutput.size() == 0
+                        || whyOutput[whyOutput.size()-1].find("Depends") == string::npos)
+                {
+                    ans.push_back(m);
+                }
+            }
+            else {
+                ans.push_back(m);
+            }
+        }
     }
     return ans;
 }
@@ -84,7 +95,7 @@ std::vector<string> getInstalledPackagesByUser(const string &architecture)
 std::vector<string> whynot(const string &architecture)
 {
     std::vector<string> ans;
-    auto m = getInstalledPackagesByUser(architecture);
+    auto m = getInstalledPackagesByUser(architecture, false, false);
     for(const auto &i : m) {
         auto output = executeCommand("aptitude why " + i);
         if(output.size() == 1

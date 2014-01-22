@@ -12,7 +12,7 @@ int main(int argc, char **argv)
         cout << "architecture(amd64 or i386) = ";
         cin >> arch;
     }
-    auto result = getInstalledPackagesByUser(arch);
+    auto result = getInstalledPackagesByUser(arch, false, false);
     printContainer(result);
     return 0;
 }
