@@ -36,7 +36,7 @@ vector<string> executeCommand(const string &command)
             }
         }
     }
-    if (pclose(fp) != 0) {
+    if (pclose(fp) == -1) {
         perror("pclose");
     }
     return output;
@@ -81,15 +81,17 @@ std::vector<string> getInstalledPackagesByUser(const string &architecture)
 }
 
 
-void whynot(const string &architecture)
+std::vector<string> whynot(const string &architecture)
 {
+    std::vector<string> ans;
     auto m = getInstalledPackagesByUser(architecture);
     for(const auto &i : m) {
         auto output = executeCommand("aptitude why " + i);
         if(output.size() == 1
-                && output[0] == "Unable to find a reason to install xsel.")
+                && output[0] == "Unable to find a reason to install " + i + ".")
         {
-            cout << i << endl;
+            ans.push_back(i);
         }
     }
+    return ans;
 }

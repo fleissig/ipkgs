@@ -27,6 +27,6 @@ void printContainer(const T &t)
 
 std::vector<std::string> getInstalledPackagesByUser(const std::string &architecture);
 
-void whynot(const std::string &architecture);
+std::vector<std::string> whynot(const std::string &architecture);
 
 #endif // FUNCTIONS_H
