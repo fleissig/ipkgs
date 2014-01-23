@@ -77,8 +77,7 @@ std::vector<string> getInstalledPackagesByUser(const string &architecture, bool 
         if(!mIsDef) {
             if(notShowDeps) {
                 auto whyOutput = executeCommand("aptitude why " + m);
-                if(whyOutput.size() == 0
-                        || whyOutput[whyOutput.size()-1].find("Depends") == string::npos)
+                if(!isDep(whyOutput, recIsDep))
                 {
                     ans.push_back(m);
                 }
@@ -92,7 +91,7 @@ std::vector<string> getInstalledPackagesByUser(const string &architecture, bool 
 }
 
 
-std::vector<string> whynot(const string &architecture)
+std::vector<string> whyNoReason(const string &architecture)
 {
     std::vector<string> ans;
     auto m = getInstalledPackagesByUser(architecture, false, false);
@@ -105,4 +104,22 @@ std::vector<string> whynot(const string &architecture)
         }
     }
     return ans;
+}
+
+
+bool isDep(const std::vector<string> &whyOutput, bool recIsDep)
+{
+    if(whyOutput.size() != 0) {
+        bool isDep = whyOutput[whyOutput.size()-1].find("Depends") != string::npos;
+        if(isDep)
+            return true;
+        else {
+            if(recIsDep) {
+                bool isRec = whyOutput[whyOutput.size()-1].find("Recommends") != string::npos;
+                if(isRec)
+                    return true;
+            }
+        }
+    }
+    return false;
 }
