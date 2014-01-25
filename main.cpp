@@ -13,6 +13,8 @@ int main(int argc, char **argv)
         cin >> arch;
     }
     auto result = getInstalledPackagesByUser(arch, false, false);
+
+//    auto result = getRemovedPackagesFromStandardSet(arch);
     printContainer(result);
     return 0;
 }

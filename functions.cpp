@@ -16,13 +16,14 @@ vector<string> executeCommand(const string &command)
     FILE * fp ;
     fp = popen(command.c_str(),"r");
     errno = 0;
-    if (fp == 0) {
+    if(fp == 0) {
         perror("popen");
         if (errno == 0) {
-            printf("%s", "allocation memory\n");
+            fputs("allocation memory\n", stderr);
         }
-        exit(1);
+        return vector<string>();
     }
+
     const int SIZE = 256;
     char buffer[SIZE];
     vector<string> output;
@@ -122,4 +123,30 @@ bool isDep(const std::vector<string> &whyOutput, bool recIsDep)
         }
     }
     return false;
+}
+
+
+std::vector<string> getRemovedPackagesFromStandardSet(const string &architecture)
+{
+    auto defpgks = getDefaultSetPackages(architecture);
+
+    string request = "!~i(";
+    for(size_t i = 0; i < defpgks.size(); ++i) {
+        if(i != defpgks.size()-1)
+            request += "~n^" + defpgks[i] + "$|";
+        else
+            request += "~n^" + defpgks[i] + "$";
+    }
+    request += ")";
+    request += "(?architecture(" + architecture + ")|?architecture(all))";
+
+    for(auto it = begin(request); it != end(request); ++it) {
+        if(*it == '+') {
+            it = request.insert(it, '\\');
+            ++it;
+        }
+    }
+
+    return executeCommand
+            ("aptitude search \'" + request + "\' | sed 's/A//' | awk \'{print $2}\'");
 }

@@ -27,6 +27,8 @@ void printContainer(const T &t)
 
 std::vector<std::string> getInstalledPackagesByUser(const std::string &architecture, bool notShowDeps, bool recIsDep);
 
+std::vector<std::string> getRemovedPackagesFromStandardSet(const std::string &architecture);
+
 std::vector<std::string> whyNoReason(const std::string &architecture);
 
 bool isDep(const std::vector<std::string> &whyOutput, bool recIsDep);
